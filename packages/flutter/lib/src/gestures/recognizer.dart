@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 import 'dart:async';
 import 'dart:collection';
 
@@ -65,7 +64,7 @@ abstract class GestureRecognizer extends GestureArenaMember with DiagnosticableT
   /// by providing the optional [kind] argument. If [kind] is null,
   /// the recognizer will accept pointer events from all device kinds.
   /// {@endtemplate}
-  GestureRecognizer({ this.debugOwner, PointerDeviceKind? kind }) : _kindFilter = kind;
+  GestureRecognizer({this.debugOwner, PointerDeviceKind? kind}) : _kindFilter = kind;
 
   /// The recognizer's owner.
   ///
@@ -113,7 +112,7 @@ abstract class GestureRecognizer extends GestureArenaMember with DiagnosticableT
   /// pointer being added while [addAllowedPointer] is only called for pointers
   /// that are allowed by this recognizer.
   @protected
-  void addAllowedPointer(PointerDownEvent event) { }
+  void addAllowedPointer(PointerDownEvent event) {}
 
   /// Handles a pointer being added that's not allowed by this recognizer.
   ///
@@ -122,7 +121,7 @@ abstract class GestureRecognizer extends GestureArenaMember with DiagnosticableT
   /// See:
   /// - [OneSequenceGestureRecognizer.handleNonAllowedPointer].
   @protected
-  void handleNonAllowedPointer(PointerDownEvent event) { }
+  void handleNonAllowedPointer(PointerDownEvent event) {}
 
   /// Checks whether or not a pointer is allowed to be tracked by this recognizer.
   @protected
@@ -149,7 +148,7 @@ abstract class GestureRecognizer extends GestureArenaMember with DiagnosticableT
   /// recognizer is being unregistered from a [GestureDetector], the
   /// GestureDetector widget calls this method).
   @mustCallSuper
-  void dispose() { }
+  void dispose() {}
 
   /// Returns a very short pretty description of the gesture that the
   /// recognizer looks for, like 'tap' or 'horizontal drag'.
@@ -165,7 +164,8 @@ abstract class GestureRecognizer extends GestureArenaMember with DiagnosticableT
   /// callback that returns a string describing useful debugging information,
   /// e.g. the arguments passed to the callback.
   @protected
-  T? invokeCallback<T>(String name, RecognizerCallback<T> callback, { String Function()? debugReport }) {
+  T? invokeCallback<T>(String name, RecognizerCallback<T> callback,
+      {String Function()? debugReport}) {
     assert(callback != null);
     T? result;
     try {
@@ -175,7 +175,8 @@ abstract class GestureRecognizer extends GestureArenaMember with DiagnosticableT
           // The 19 in the line below is the width of the prefix used by
           // _debugLogDiagnostic in arena.dart.
           final String prefix = debugPrintGestureArenaDiagnostics ? ' ' * 19 + '❙ ' : '';
-          debugPrint('$prefix$this calling $name callback.${ report?.isNotEmpty == true ? " $report" : "" }');
+          debugPrint(
+              '$prefix$this calling $name callback.${report?.isNotEmpty == true ? " $report" : ""}');
         }
         return true;
       }());
@@ -185,7 +186,8 @@ abstract class GestureRecognizer extends GestureArenaMember with DiagnosticableT
       assert(() {
         collector = () sync* {
           yield StringProperty('Handler', name);
-          yield DiagnosticsProperty<GestureRecognizer>('Recognizer', this, style: DiagnosticsTreeStyle.errorProperty);
+          yield DiagnosticsProperty<GestureRecognizer>('Recognizer', this,
+              style: DiagnosticsTreeStyle.errorProperty);
         };
         return true;
       }());
@@ -237,10 +239,10 @@ abstract class OneSequenceGestureRecognizer extends GestureRecognizer {
   void handleEvent(PointerEvent event);
 
   @override
-  void acceptGesture(int pointer) { }
+  void acceptGesture(int pointer) {}
 
   @override
-  void rejectGesture(int pointer) { }
+  void rejectGesture(int pointer) {}
 
   /// Called when the number of pointers this recognizer is tracking changes from one to zero.
   ///
@@ -256,8 +258,7 @@ abstract class OneSequenceGestureRecognizer extends GestureRecognizer {
   void resolve(GestureDisposition disposition) {
     final List<GestureArenaEntry> localEntries = List<GestureArenaEntry>.from(_entries.values);
     _entries.clear();
-    for (final GestureArenaEntry entry in localEntries)
-      entry.resolve(disposition);
+    for (final GestureArenaEntry entry in localEntries) entry.resolve(disposition);
   }
 
   /// Resolves this recognizer's participation in the given gesture arena with
@@ -294,6 +295,7 @@ abstract class OneSequenceGestureRecognizer extends GestureRecognizer {
   /// is shortly after creating the recognizer.
   GestureArenaTeam? get team => _team;
   GestureArenaTeam? _team;
+
   /// The [team] can only be set once.
   set team(GestureArenaTeam? value) {
     assert(value != null);
@@ -304,8 +306,7 @@ abstract class OneSequenceGestureRecognizer extends GestureRecognizer {
   }
 
   GestureArenaEntry _addPointerToArena(int pointer) {
-    if (_team != null)
-      return _team!.add(pointer, this);
+    if (_team != null) return _team!.add(pointer, this);
     return GestureBinding.instance!.gestureArena.add(pointer, this);
   }
 
@@ -337,8 +338,7 @@ abstract class OneSequenceGestureRecognizer extends GestureRecognizer {
     if (_trackedPointers.contains(pointer)) {
       GestureBinding.instance!.pointerRouter.removeRoute(pointer, handleEvent);
       _trackedPointers.remove(pointer);
-      if (_trackedPointers.isEmpty)
-        didStopTrackingLastPointer(pointer);
+      if (_trackedPointers.isEmpty) didStopTrackingLastPointer(pointer);
     }
   }
 
@@ -346,8 +346,7 @@ abstract class OneSequenceGestureRecognizer extends GestureRecognizer {
   /// a [PointerUpEvent] or a [PointerCancelEvent] event.
   @protected
   void stopTrackingIfPointerNoLongerDown(PointerEvent event) {
-    if (event is PointerUpEvent || event is PointerCancelEvent)
-      stopTrackingPointer(event.pointer);
+    if (event is PointerUpEvent || event is PointerCancelEvent) stopTrackingPointer(event.pointer);
   }
 }
 
@@ -391,15 +390,15 @@ abstract class PrimaryPointerGestureRecognizer extends OneSequenceGestureRecogni
     this.postAcceptSlopTolerance = kTouchSlop,
     Object? debugOwner,
     PointerDeviceKind? kind,
-  }) : assert(
-         preAcceptSlopTolerance == null || preAcceptSlopTolerance >= 0,
-         'The preAcceptSlopTolerance must be positive or null',
-       ),
-       assert(
-         postAcceptSlopTolerance == null || postAcceptSlopTolerance >= 0,
-         'The postAcceptSlopTolerance must be positive or null',
-       ),
-       super(debugOwner: debugOwner, kind: kind);
+  })  : assert(
+          preAcceptSlopTolerance == null || preAcceptSlopTolerance >= 0,
+          'The preAcceptSlopTolerance must be positive or null',
+        ),
+        assert(
+          postAcceptSlopTolerance == null || postAcceptSlopTolerance >= 0,
+          'The postAcceptSlopTolerance must be positive or null',
+        ),
+        super(debugOwner: debugOwner, kind: kind);
 
   /// If non-null, the recognizer will call [didExceedDeadline] after this
   /// amount of time has elapsed since starting to track the primary pointer.
@@ -450,8 +449,7 @@ abstract class PrimaryPointerGestureRecognizer extends OneSequenceGestureRecogni
       state = GestureRecognizerState.possible;
       primaryPointer = event.pointer;
       initialPosition = OffsetPair(local: event.localPosition, global: event.position);
-      if (deadline != null)
-        _timer = Timer(deadline!, () => didExceedDeadlineWithEvent(event));
+      if (deadline != null) _timer = Timer(deadline!, () => didExceedDeadlineWithEvent(event));
     }
   }
 
@@ -459,16 +457,15 @@ abstract class PrimaryPointerGestureRecognizer extends OneSequenceGestureRecogni
   void handleEvent(PointerEvent event) {
     assert(state != GestureRecognizerState.ready);
     if (state == GestureRecognizerState.possible && event.pointer == primaryPointer) {
-      final bool isPreAcceptSlopPastTolerance =
-          !_gestureAccepted &&
+      final bool isPreAcceptSlopPastTolerance = !_gestureAccepted &&
           preAcceptSlopTolerance != null &&
           _getGlobalDistance(event) > preAcceptSlopTolerance!;
-      final bool isPostAcceptSlopPastTolerance =
-          _gestureAccepted &&
+      final bool isPostAcceptSlopPastTolerance = _gestureAccepted &&
           postAcceptSlopTolerance != null &&
           _getGlobalDistance(event) > postAcceptSlopTolerance!;
 
-      if (event is PointerMoveEvent && (isPreAcceptSlopPastTolerance || isPostAcceptSlopPastTolerance)) {
+      if (event is PointerMoveEvent &&
+          (isPreAcceptSlopPastTolerance || isPostAcceptSlopPastTolerance)) {
         resolve(GestureDisposition.rejected);
         stopTrackingPointer(primaryPointer!);
       } else {
@@ -584,7 +581,7 @@ class OffsetPair {
   final Offset global;
 
   /// Adds the `other.global` to [global] and `other.local` to [local].
-  OffsetPair operator+(OffsetPair other) {
+  OffsetPair operator +(OffsetPair other) {
     return OffsetPair(
       local: local + other.local,
       global: global + other.global,
@@ -592,7 +589,7 @@ class OffsetPair {
   }
 
   /// Subtracts the `other.global` from [global] and `other.local` from [local].
-  OffsetPair operator-(OffsetPair other) {
+  OffsetPair operator -(OffsetPair other) {
     return OffsetPair(
       local: local - other.local,
       global: global - other.global,
